@@ -24,6 +24,11 @@ function Navbar() {
             <Link to="/login" className="nav-link">Login</Link>
             <Link to="/register" className="btn btn-red">Register</Link>
           </>
+        ) : user.role === 'admin' ? (
+          <>
+            <Link to="/admin" className="nav-link">Dashboard</Link>
+            <button onClick={handleLogout} className="btn btn-outline">Logout</button>
+          </>
         ) : user.role === 'donor' ? (
           <>
             <Link to="/search" className="nav-link">Find Donors</Link>

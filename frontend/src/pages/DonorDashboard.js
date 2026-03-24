@@ -88,6 +88,12 @@ function DonorDashboard() {
             </span>
           </div>
         </div>
+        <div style={{ marginTop: '16px' }}>
+          <a href="/edit-profile" className="btn btn-gray"
+            style={{ fontSize: '13px', padding: '8px 18px' }}>
+             ✏️ Edit Profile
+          </a>
+        </div>
 
         <div className="card">
           <h3 style={{marginBottom:'16px'}}>My Badges</h3>

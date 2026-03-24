@@ -8,6 +8,9 @@ import Register from './pages/Register';
 import SearchDonors from './pages/SearchDonors';
 import DonorDashboard from './pages/DonorDashboard';
 import HospitalDashboard from './pages/HospitalDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import EditProfile from './pages/EditProfile';
+
 import './App.css';
 
 function App() {
@@ -22,6 +25,8 @@ function App() {
           <Route path="/search" element={<SearchDonors />} />
           <Route path="/donor-dashboard" element={<DonorDashboard />} />
           <Route path="/hospital-dashboard" element={<HospitalDashboard />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
