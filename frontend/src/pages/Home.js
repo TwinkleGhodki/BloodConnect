@@ -13,6 +13,8 @@ function Home() {
         <div className="hero-buttons">
           <Link to="/register" className="btn btn-red">Become a Donor</Link>
           <Link to="/search" className="btn btn-outline">Find Donors Now</Link>
+          {/* Only show if logged in as admin */}
+          <Link to="/admin" className="btn btn-gray" style={{marginTop:'10px'}}>Admin Panel</Link>
         </div>
       </div>
 
