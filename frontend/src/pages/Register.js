@@ -19,7 +19,7 @@ function Register() {
     setLoading(true);
     setError('');
     try {
-      const res = await API.post('/auth/register', form);
+      const res = await API.post('/api/auth/register', form);
       login(res.data.user, res.data.token);
       if (res.data.user.role === 'donor') navigate('/donor-dashboard');
       else navigate('/hospital-dashboard');
