@@ -38,7 +38,7 @@ function DonorDashboard() {
 
   const respondToRequest = async (requestId, response) => {
     try {
-      await API.post(`/requests/${requestId}/respond`, { response });
+      await API.post(`/api/requests/${requestId}/respond`, { response });
       setMsg(`Response recorded: ${response}`);
       setTimeout(() => setMsg(''), 3000);
     } catch (err) { console.error(err); }

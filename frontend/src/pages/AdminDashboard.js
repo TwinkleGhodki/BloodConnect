@@ -46,7 +46,7 @@ function AdminDashboard() {
   const deleteUser = async (id) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
     try {
-      await API.delete(`/admin/user/${id}`);
+      await API.delete(`/api/admin/user/${id}`);
       setMsg('User deleted.');
       fetchAll();
       setTimeout(() => setMsg(''), 3000);

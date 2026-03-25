@@ -32,7 +32,7 @@ function HospitalDashboard() {
 
   const fetchInventory = async () => {
     try {
-      const res = await API.get('/hospitals/inventory');
+      const res = await API.get('/api/hospitals/inventory');
       setInventory(res.data.inventory);
       setAlerts(res.data.alerts);
     } catch (err) { console.error(err); }
@@ -41,7 +41,7 @@ function HospitalDashboard() {
   const createRequest = async (e) => {
     e.preventDefault();
     try {
-      await API.post('/requests', newRequest);
+      await API.post('/api/requests', newRequest);
       setMsg('Blood request created successfully!');
       fetchRequests();
       setNewRequest({ bloodType:'', unitsNeeded:'', urgencyLevel:'normal', city:'', state:'', patientDescription:'' });
@@ -51,7 +51,7 @@ function HospitalDashboard() {
 
   const triggerSOS = async (requestId) => {
     try {
-      const res = await API.post(`/requests/${requestId}/sos`);
+      const res = await API.post(`/api/requests/${requestId}/sos`);
       setSosResult(res.data);
     } catch (err) { console.error(err); }
   };
@@ -59,7 +59,7 @@ function HospitalDashboard() {
   const updateInventory = async (e) => {
     e.preventDefault();
     try {
-      await API.post('/hospitals/inventory', newInventory);
+      await API.post('/api/hospitals/inventory', newInventory);
       setMsg('Inventory updated!');
       fetchInventory();
       setNewInventory({ bloodType:'', unitsAvailable:'', minimumRequired:5 });
