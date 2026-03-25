@@ -18,7 +18,7 @@ function EditProfile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await API.get('/auth/me');
+      const res = await API.get('/api/auth/me');
       setForm({
         bloodType: res.data.bloodType || '',
         city: res.data.city || '',

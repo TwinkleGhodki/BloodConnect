@@ -25,7 +25,7 @@ function HospitalDashboard() {
 
   const fetchRequests = async () => {
     try {
-      const res = await API.get('/requests');
+      const res = await API.get('/api/requests');
       setRequests(res.data);
     } catch (err) { console.error(err); }
   };

@@ -15,7 +15,7 @@ function SearchDonors() {
       const params = new URLSearchParams();
       if (filters.bloodType) params.append('bloodType', filters.bloodType);
       if (filters.city) params.append('city', filters.city);
-      const res = await API.get(`/donors/ranked?${params.toString()}`);
+      const res = await API.get(`/api/donors/ranked?${params.toString()}`);
       setDonors(res.data.donors);
       setCount(res.data.count);
       setSearched(true);

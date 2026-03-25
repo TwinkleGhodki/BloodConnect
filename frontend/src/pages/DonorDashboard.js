@@ -14,7 +14,7 @@ function DonorDashboard() {
 
   const fetchProfile = async () => {
     try {
-      const res = await API.get('/auth/me');
+      const res = await API.get('/api/auth/me');
       setProfile(res.data);
     } catch (err) { console.error(err); }
     setLoading(false);
@@ -22,14 +22,14 @@ function DonorDashboard() {
 
   const fetchRequests = async () => {
     try {
-      const res = await API.get('/requests');
+      const res = await API.get('/api/requests');
       setRequests(res.data);
     } catch (err) { console.error(err); }
   };
 
   const toggleAvailability = async () => {
     try {
-      const res = await API.patch('/donors/availability');
+      const res = await API.patch('/api/donors/availability');
       setMsg(res.data.message);
       setProfile({...profile, isAvailable: res.data.isAvailable});
       setTimeout(() => setMsg(''), 3000);
