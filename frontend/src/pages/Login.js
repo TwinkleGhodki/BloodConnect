@@ -15,7 +15,7 @@ function Login() {
     setLoading(true);
     setError('');
     try {
-      const res = await API.post('/api/auth/login', form);
+      const res = await API.post('/auth/login', form);
       login(res.data.user, res.data.token);
       if (res.data.user.role === 'donor') navigate('/donor-dashboard');
       else navigate('/hospital-dashboard');

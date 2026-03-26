@@ -17,10 +17,10 @@ function AdminDashboard() {
   const fetchAll = async () => {
     try {
       const [statsRes, donorsRes, hospitalsRes, requestsRes] = await Promise.all([
-        API.get('/api/admin/stats'),
-        API.get('/api/admin/donors'),
-        API.get('/api/admin/hospitals'),
-        API.get('/api/admin/requests'),
+        API.get('/admin/stats'),
+        API.get('/admin/donors'),
+        API.get('/admin/hospitals'),
+        API.get('/admin/requests'),
       ]);
       setStats(statsRes.data);
       setDonors(donorsRes.data);
@@ -34,7 +34,7 @@ function AdminDashboard() {
 
   const verifyDonor = async (id) => {
     try {
-      await API.patch(`/api/admin/verify/${id}`);
+      await API.patch(`/admin/verify/${id}`);
       setMsg('Donor verified successfully!');
       fetchAll();
       setTimeout(() => setMsg(''), 3000);
@@ -46,7 +46,7 @@ function AdminDashboard() {
   const deleteUser = async (id) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
     try {
-      await API.delete(`/api/admin/user/${id}`);
+      await API.delete(`/admin/user/${id}`);
       setMsg('User deleted.');
       fetchAll();
       setTimeout(() => setMsg(''), 3000);
