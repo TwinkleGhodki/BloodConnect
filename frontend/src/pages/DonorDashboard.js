@@ -14,7 +14,7 @@ function DonorDashboard() {
 
   const fetchProfile = async () => {
     try {
-      const res = await API.get('/api/auth/me');
+      const res = await API.get('/auth/me');
       setProfile(res.data);
     } catch (err) { console.error(err); }
     setLoading(false);
@@ -22,14 +22,14 @@ function DonorDashboard() {
 
   const fetchRequests = async () => {
     try {
-      const res = await API.get('/api/requests');
+      const res = await API.get('/requests');
       setRequests(res.data);
     } catch (err) { console.error(err); }
   };
 
   const toggleAvailability = async () => {
     try {
-      const res = await API.patch('/api/donors/availability');
+      const res = await API.patch('/donors/availability');
       setMsg(res.data.message);
       setProfile({...profile, isAvailable: res.data.isAvailable});
       setTimeout(() => setMsg(''), 3000);
@@ -38,7 +38,7 @@ function DonorDashboard() {
 
   const respondToRequest = async (requestId, response) => {
     try {
-      await API.post(`/api/requests/${requestId}/respond`, { response });
+      await API.post(`/requests/${requestId}/respond`, { response });
       setMsg(`Response recorded: ${response}`);
       setTimeout(() => setMsg(''), 3000);
     } catch (err) { console.error(err); }
