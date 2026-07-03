@@ -5,6 +5,8 @@ const DonationRequest = require('../models/DonationRequest');
 const DonorResponse = require('../models/DonorResponse');
 const auth = require('../middleware/auth');
 const { requireAdmin } = require('../middleware/authorize');
+const validate = require('../middleware/validate');
+const { validateMongoId } = require('../middleware/validators');
 
 // GET SYSTEM STATS
 router.get('/stats', auth, requireAdmin, async (req, res) => {
@@ -85,7 +87,7 @@ router.get('/requests', auth, requireAdmin, async (req, res) => {
 });
 
 // VERIFY DONOR
-router.patch('/verify/:id', auth, requireAdmin, async (req, res) => {
+router.patch('/verify/:id', auth, requireAdmin, validateMongoId, validate, async (req, res) => {
   try {
     const donor = await User.findByIdAndUpdate(
       req.params.id,
@@ -99,7 +101,7 @@ router.patch('/verify/:id', auth, requireAdmin, async (req, res) => {
 });
 
 // DELETE USER
-router.delete('/user/:id', auth, requireAdmin, async (req, res) => {
+router.delete('/user/:id', auth, requireAdmin, validateMongoId, validate, async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted successfully' });

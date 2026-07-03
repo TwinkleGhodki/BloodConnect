@@ -4,9 +4,11 @@ const HospitalInventory = require('../models/HospitalInventory');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { requireHospital } = require('../middleware/authorize');
+const validate = require('../middleware/validate');
+const { validateInventory } = require('../middleware/validators');
 
 // UPDATE BLOOD INVENTORY
-router.post('/inventory', auth, requireHospital, async (req, res) => {
+router.post('/inventory', auth, requireHospital, validateInventory, validate, async (req, res) => {
   try {
     const { bloodType, unitsAvailable, minimumRequired } = req.body;
     const hospital = await User.findById(req.user.id);

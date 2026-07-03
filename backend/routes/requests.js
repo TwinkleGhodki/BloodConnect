@@ -5,9 +5,16 @@ const DonorResponse = require('../models/DonorResponse');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { requireDonor, requireHospital, requireRequestOwnerOrAdmin } = require('../middleware/authorize');
+const validate = require('../middleware/validate');
+const {
+  validateMongoId,
+  validateCreateRequest,
+  validateRequestStatus,
+  validateDonorResponse
+} = require('../middleware/validators');
 
 // CREATE BLOOD REQUEST (Hospital only)
-router.post('/', auth, requireHospital, async (req, res) => {
+router.post('/', auth, requireHospital, validateCreateRequest, validate, async (req, res) => {
   try {
     const { bloodType, unitsNeeded, urgencyLevel, city, state, patientDescription } = req.body;
 
@@ -41,7 +48,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET SINGLE REQUEST
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateMongoId, validate, async (req, res) => {
   try {
     const request = await DonationRequest.findById(req.params.id)
       .populate('respondedDonors', 'name bloodType phone city');
@@ -53,7 +60,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // SOS - TRIGGER EMERGENCY (finds all matching donors instantly)
-router.post('/:id/sos', auth, requireRequestOwnerOrAdmin(DonationRequest), async (req, res) => {
+router.post('/:id/sos', auth, validateMongoId, validate, requireRequestOwnerOrAdmin(DonationRequest), async (req, res) => {
   try {
     const request = await DonationRequest.findById(req.params.id);
     if (!request) return res.status(404).json({ message: 'Request not found' });
@@ -93,7 +100,7 @@ router.post('/:id/sos', auth, requireRequestOwnerOrAdmin(DonationRequest), async
 });
 
 // DONOR RESPONDS TO REQUEST
-router.post('/:id/respond', auth, requireDonor, async (req, res) => {
+router.post('/:id/respond', auth, requireDonor, validateDonorResponse, validate, async (req, res) => {
   try {
     const { response } = req.body;
     const request = await DonationRequest.findById(req.params.id);
@@ -145,7 +152,7 @@ router.post('/:id/respond', auth, requireDonor, async (req, res) => {
 });
 
 // CLOSE / FULFILL REQUEST
-router.patch('/:id/status', auth, requireRequestOwnerOrAdmin(DonationRequest), async (req, res) => {
+router.patch('/:id/status', auth, validateRequestStatus, validate, requireRequestOwnerOrAdmin(DonationRequest), async (req, res) => {
   try {
     const { status } = req.body;
     const request = await DonationRequest.findByIdAndUpdate(

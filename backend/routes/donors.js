@@ -3,10 +3,17 @@ const router = express.Router();
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 const { requireDonor } = require('../middleware/authorize');
+const validate = require('../middleware/validate');
+const {
+  validateMongoId,
+  validateDonorSearch,
+  validateRankedDonorSearch,
+  validateDonorProfile
+} = require('../middleware/validators');
 const { rankDonors } = require('../ml/donorPredictor');
 
 // GET ALL DONORS - Search by blood type and city
-router.get('/search', async (req, res) => {
+router.get('/search', validateDonorSearch, validate, async (req, res) => {
   try {
     const { bloodType, city, state } = req.query;
     let filter = { role: 'donor', isAvailable: true };
@@ -30,7 +37,7 @@ router.get('/search', async (req, res) => {
 });
 
 // ML RANKED DONOR SEARCH
-router.get('/ranked', async (req, res) => {
+router.get('/ranked', validateRankedDonorSearch, validate, async (req, res) => {
   try {
     const { bloodType, city } = req.query;
     let filter = { role: 'donor' };
@@ -47,7 +54,7 @@ router.get('/ranked', async (req, res) => {
 });
 
 // GET DONOR PROFILE
-router.get('/:id', async (req, res) => {
+router.get('/:id', validateMongoId, validate, async (req, res) => {
   try {
     const donor = await User.findById(req.params.id).select('-password');
     if (!donor) return res.status(404).json({ message: 'Donor not found' });
@@ -58,7 +65,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // UPDATE DONOR PROFILE
-router.put('/profile', auth, requireDonor, async (req, res) => {
+router.put('/profile', auth, requireDonor, validateDonorProfile, validate, async (req, res) => {
   try {
     const { bloodType, city, state, isAvailable, lastDonationDate, phone, location } = req.body;
     const updated = await User.findByIdAndUpdate(
