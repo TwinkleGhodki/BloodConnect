@@ -4,9 +4,10 @@ const User = require('../models/User');
 const DonationRequest = require('../models/DonationRequest');
 const DonorResponse = require('../models/DonorResponse');
 const auth = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/authorize');
 
 // GET SYSTEM STATS
-router.get('/stats', auth, async (req, res) => {
+router.get('/stats', auth, requireAdmin, async (req, res) => {
   try {
     const totalDonors = await User.countDocuments({ role: 'donor' });
     const totalHospitals = await User.countDocuments({ role: 'hospital' });
@@ -49,7 +50,7 @@ router.get('/stats', auth, async (req, res) => {
 });
 
 // GET ALL DONORS
-router.get('/donors', auth, async (req, res) => {
+router.get('/donors', auth, requireAdmin, async (req, res) => {
   try {
     const donors = await User.find({ role: 'donor' })
       .select('-password')
@@ -61,7 +62,7 @@ router.get('/donors', auth, async (req, res) => {
 });
 
 // GET ALL HOSPITALS
-router.get('/hospitals', auth, async (req, res) => {
+router.get('/hospitals', auth, requireAdmin, async (req, res) => {
   try {
     const hospitals = await User.find({ role: 'hospital' })
       .select('-password')
@@ -73,7 +74,7 @@ router.get('/hospitals', auth, async (req, res) => {
 });
 
 // GET ALL REQUESTS
-router.get('/requests', auth, async (req, res) => {
+router.get('/requests', auth, requireAdmin, async (req, res) => {
   try {
     const requests = await DonationRequest.find()
       .sort({ createdAt: -1 });
@@ -84,7 +85,7 @@ router.get('/requests', auth, async (req, res) => {
 });
 
 // VERIFY DONOR
-router.patch('/verify/:id', auth, async (req, res) => {
+router.patch('/verify/:id', auth, requireAdmin, async (req, res) => {
   try {
     const donor = await User.findByIdAndUpdate(
       req.params.id,
@@ -98,7 +99,7 @@ router.patch('/verify/:id', auth, async (req, res) => {
 });
 
 // DELETE USER
-router.delete('/user/:id', auth, async (req, res) => {
+router.delete('/user/:id', auth, requireAdmin, async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted successfully' });

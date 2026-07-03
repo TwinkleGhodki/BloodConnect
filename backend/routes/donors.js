@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { requireDonor } = require('../middleware/authorize');
 const { rankDonors } = require('../ml/donorPredictor');
 
 // GET ALL DONORS - Search by blood type and city
@@ -57,7 +58,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // UPDATE DONOR PROFILE
-router.put('/profile', auth, async (req, res) => {
+router.put('/profile', auth, requireDonor, async (req, res) => {
   try {
     const { bloodType, city, state, isAvailable, lastDonationDate, phone, location } = req.body;
     const updated = await User.findByIdAndUpdate(
@@ -72,7 +73,7 @@ router.put('/profile', auth, async (req, res) => {
 });
 
 // TOGGLE AVAILABILITY
-router.patch('/availability', auth, async (req, res) => {
+router.patch('/availability', auth, requireDonor, async (req, res) => {
   try {
     const donor = await User.findById(req.user.id);
     donor.isAvailable = !donor.isAvailable;

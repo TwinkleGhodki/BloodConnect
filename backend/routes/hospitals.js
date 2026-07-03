@@ -3,9 +3,10 @@ const router = express.Router();
 const HospitalInventory = require('../models/HospitalInventory');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { requireHospital } = require('../middleware/authorize');
 
 // UPDATE BLOOD INVENTORY
-router.post('/inventory', auth, async (req, res) => {
+router.post('/inventory', auth, requireHospital, async (req, res) => {
   try {
     const { bloodType, unitsAvailable, minimumRequired } = req.body;
     const hospital = await User.findById(req.user.id);
@@ -41,7 +42,7 @@ router.post('/inventory', auth, async (req, res) => {
 });
 
 // GET HOSPITAL INVENTORY
-router.get('/inventory', auth, async (req, res) => {
+router.get('/inventory', auth, requireHospital, async (req, res) => {
   try {
     const inventory = await HospitalInventory.find({ hospital: req.user.id });
 

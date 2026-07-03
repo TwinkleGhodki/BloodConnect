@@ -4,9 +4,10 @@ const DonationRequest = require('../models/DonationRequest');
 const DonorResponse = require('../models/DonorResponse');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { requireDonor, requireHospital, requireRequestOwnerOrAdmin } = require('../middleware/authorize');
 
 // CREATE BLOOD REQUEST (Hospital only)
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, requireHospital, async (req, res) => {
   try {
     const { bloodType, unitsNeeded, urgencyLevel, city, state, patientDescription } = req.body;
 
@@ -52,7 +53,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // SOS - TRIGGER EMERGENCY (finds all matching donors instantly)
-router.post('/:id/sos', auth, async (req, res) => {
+router.post('/:id/sos', auth, requireRequestOwnerOrAdmin(DonationRequest), async (req, res) => {
   try {
     const request = await DonationRequest.findById(req.params.id);
     if (!request) return res.status(404).json({ message: 'Request not found' });
@@ -92,7 +93,7 @@ router.post('/:id/sos', auth, async (req, res) => {
 });
 
 // DONOR RESPONDS TO REQUEST
-router.post('/:id/respond', auth, async (req, res) => {
+router.post('/:id/respond', auth, requireDonor, async (req, res) => {
   try {
     const { response } = req.body;
     const request = await DonationRequest.findById(req.params.id);
@@ -144,7 +145,7 @@ router.post('/:id/respond', auth, async (req, res) => {
 });
 
 // CLOSE / FULFILL REQUEST
-router.patch('/:id/status', auth, async (req, res) => {
+router.patch('/:id/status', auth, requireRequestOwnerOrAdmin(DonationRequest), async (req, res) => {
   try {
     const { status } = req.body;
     const request = await DonationRequest.findByIdAndUpdate(

@@ -8,6 +8,11 @@ const User = require('../models/User');
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, phone, role, bloodType, city, state, hospitalName, address } = req.body;
+    const allowedRegistrationRoles = ['donor', 'hospital'];
+
+    if (role && !allowedRegistrationRoles.includes(role)) {
+      return res.status(400).json({ message: 'Invalid registration role' });
+    }
 
     // Check if user exists
     let user = await User.findOne({ email });
@@ -19,7 +24,7 @@ router.post('/register', async (req, res) => {
 
     // Create user
     user = new User({
-      name, email, phone, role,
+      name, email, phone, role: role || 'donor',
       password: hashedPassword,
       bloodType, city, state,
       hospitalName, address
