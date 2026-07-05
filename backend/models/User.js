@@ -28,8 +28,9 @@ const UserSchema = new mongoose.Schema({
 
   // DONOR FIELDS
   bloodType: {
-    type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+  type: String,
+  enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+  set: (v) => v === '' ? undefined : v
   },
   city: { type: String },
   state: { type: String },
@@ -42,6 +43,9 @@ const UserSchema = new mongoose.Schema({
     default: true
   },
   lastDonationDate: {
+    type: Date
+  },
+  eligibilityDate: {
     type: Date
   },
   isVerified: {

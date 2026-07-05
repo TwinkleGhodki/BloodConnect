@@ -26,10 +26,16 @@ router.post('/register', validateRegister, validate, async (req, res) => {
 
     // Create user
     user = new User({
-      name, email, phone, role: role || 'donor',
+      name,
+      email,
+      phone,
+      role: role || 'donor',
       password: hashedPassword,
-      bloodType, city, state,
-      hospitalName, address
+      bloodType: bloodType || undefined,
+      city,
+      state,
+      hospitalName,
+      address
     });
 
     await user.save();

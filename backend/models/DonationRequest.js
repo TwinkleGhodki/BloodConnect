@@ -23,9 +23,12 @@ const DonationRequestSchema = new mongoose.Schema({
   patientDescription: { type: String },
   status: {
     type: String,
-    enum: ['open', 'fulfilled', 'closed'],
+    enum: ['open', 'scheduled', 'partially_fulfilled', 'fulfilled', 'closed', 'cancelled', 'expired'],
     default: 'open'
   },
+  unitsFulfilled: { type: Number, default: 0 },
+  fulfilledAt: { type: Date },
+  closedAt: { type: Date },
   respondedDonors: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

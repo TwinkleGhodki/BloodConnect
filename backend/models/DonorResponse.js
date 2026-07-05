@@ -13,8 +13,13 @@ const DonorResponseSchema = new mongoose.Schema({
   },
   response: {
     type: String,
-    enum: ['accepted', 'declined', 'pending'],
+    enum: ['pending', 'accepted', 'declined', 'scheduled', 'withdrawn', 'no_show', 'completed', 'cancelled'],
     default: 'pending'
+  },
+  completedAt: { type: Date },
+  confirmedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   respondedAt: { type: Date, default: Date.now }
 

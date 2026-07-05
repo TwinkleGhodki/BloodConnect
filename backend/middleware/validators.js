@@ -3,8 +3,8 @@ const { body, param, query } = require('express-validator');
 const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const USER_ROLES = ['donor', 'hospital'];
 const URGENCY_LEVELS = ['critical', 'high', 'normal'];
-const REQUEST_STATUSES = ['open', 'fulfilled', 'closed'];
-const DONOR_RESPONSES = ['accepted', 'declined', 'pending'];
+const REQUEST_STATUSES = ['open', 'scheduled', 'partially_fulfilled', 'fulfilled', 'closed', 'cancelled', 'expired'];
+const DONOR_RESPONSES = ['accepted', 'declined', 'withdrawn'];
 
 const phoneRule = body('phone')
   .trim()
@@ -27,6 +27,10 @@ const optionalStateRule = body('state')
 const validateMongoId = param('id')
   .isMongoId()
   .withMessage('Invalid id');
+
+const validateResponseId = param('responseId')
+  .isMongoId()
+  .withMessage('Invalid response id');
 
 const validateRegister = [
   body('name')
@@ -191,7 +195,12 @@ const validateDonorResponse = [
   validateMongoId,
   body('response')
     .isIn(DONOR_RESPONSES)
-    .withMessage('Response must be accepted, declined, or pending')
+    .withMessage('Response must be accepted, declined, or withdrawn')
+];
+
+const validateCompleteDonation = [
+  validateMongoId,
+  validateResponseId
 ];
 
 const validateInventory = [
@@ -211,6 +220,7 @@ const validateInventory = [
 
 module.exports = {
   validateMongoId,
+  validateResponseId,
   validateRegister,
   validateLogin,
   validateDonorSearch,
@@ -219,5 +229,6 @@ module.exports = {
   validateCreateRequest,
   validateRequestStatus,
   validateDonorResponse,
+  validateCompleteDonation,
   validateInventory
 };

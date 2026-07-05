@@ -10,8 +10,12 @@ const {
   validateMongoId,
   validateCreateRequest,
   validateRequestStatus,
-  validateDonorResponse
+  validateDonorResponse,
+  validateCompleteDonation
 } = require('../middleware/validators');
+
+const TERMINAL_RESPONSE_STATUSES = ['completed', 'cancelled', 'no_show'];
+const CLOSED_REQUEST_STATUSES = ['fulfilled', 'closed', 'cancelled', 'expired'];
 
 // CREATE BLOOD REQUEST (Hospital only)
 router.post('/', auth, requireHospital, validateCreateRequest, validate, async (req, res) => {
@@ -105,46 +109,104 @@ router.post('/:id/respond', auth, requireDonor, validateDonorResponse, validate,
     const { response } = req.body;
     const request = await DonationRequest.findById(req.params.id);
     if (!request) return res.status(404).json({ message: 'Request not found' });
+    if (CLOSED_REQUEST_STATUSES.includes(request.status)) {
+      return res.status(400).json({ message: 'Cannot respond to a request that is no longer active' });
+    }
 
-    // Save response
     let donorResponse = await DonorResponse.findOne({
       request: req.params.id,
       donor: req.user.id
     });
 
     if (donorResponse) {
+      if (TERMINAL_RESPONSE_STATUSES.includes(donorResponse.response)) {
+        return res.status(400).json({ message: `Cannot change a ${donorResponse.response} response` });
+      }
+
+      if (response === 'withdrawn' && !['accepted', 'scheduled'].includes(donorResponse.response)) {
+        return res.status(400).json({ message: 'Only accepted or scheduled responses can be withdrawn' });
+      }
+
       donorResponse.response = response;
+      donorResponse.respondedAt = new Date();
       await donorResponse.save();
     } else {
+      if (response === 'withdrawn') {
+        return res.status(400).json({ message: 'Cannot withdraw before accepting a request' });
+      }
+
       donorResponse = new DonorResponse({
         request: req.params.id,
         donor: req.user.id,
         response
       });
       await donorResponse.save();
+    }
 
-      if (response === 'accepted') {
-        request.respondedDonors.push(req.user.id);
-        await request.save();
+    const donorId = req.user.id;
+    const alreadyResponded = request.respondedDonors.some(id => id.toString() === donorId);
 
-        // Update donor count and check badges
-        const donor = await User.findById(req.user.id);
-        if (response === 'accepted') {
-          donor.donationCount += 1;
-          // Award badges
-          if (donor.donationCount >= 1 && !donor.badges.includes('First Responder'))
-            donor.badges.push('First Responder');
-          if (donor.donationCount >= 5 && !donor.badges.includes('Life Saver'))
-            donor.badges.push('Life Saver');
-          if (donor.donationCount >= 10 && !donor.badges.includes('Hero Donor'))
-            donor.badges.push('Hero Donor');
-          await donor.save();
-        }
-      }
+    if (response === 'accepted' && !alreadyResponded) {
+      request.respondedDonors.push(donorId);
+      await request.save();
+    } else if (['declined', 'withdrawn'].includes(response) && alreadyResponded) {
+      request.respondedDonors = request.respondedDonors.filter(id => id.toString() !== donorId);
+      await request.save();
     }
 
     res.json({ message: `Response recorded: ${response}`, donorResponse });
 
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// HOSPITAL CONFIRMS COMPLETED DONATION
+router.patch('/:id/responses/:responseId/complete', auth, validateCompleteDonation, validate, requireRequestOwnerOrAdmin(DonationRequest), async (req, res) => {
+  try {
+    const request = await DonationRequest.findById(req.params.id);
+    if (!request) return res.status(404).json({ message: 'Request not found' });
+    if (CLOSED_REQUEST_STATUSES.includes(request.status)) {
+      return res.status(400).json({ message: 'Cannot complete donations for a request that is no longer active' });
+    }
+
+    const donorResponse = await DonorResponse.findOne({
+      _id: req.params.responseId,
+      request: req.params.id
+    });
+
+    if (!donorResponse) {
+      return res.status(404).json({ message: 'Donor response not found' });
+    }
+
+    if (donorResponse.response === 'completed') {
+      return res.status(400).json({ message: 'Donation has already been completed' });
+    }
+
+    if (!['accepted', 'scheduled'].includes(donorResponse.response)) {
+      return res.status(400).json({ message: `Cannot complete a ${donorResponse.response} response` });
+    }
+
+    donorResponse.response = 'completed';
+    donorResponse.completedAt = new Date();
+    donorResponse.confirmedBy = req.user.id;
+    await donorResponse.save();
+
+    request.unitsFulfilled = (request.unitsFulfilled || 0) + 1;
+    if (request.unitsFulfilled >= request.unitsNeeded) {
+      request.status = 'fulfilled';
+      request.fulfilledAt = request.fulfilledAt || new Date();
+    } else {
+      request.status = 'partially_fulfilled';
+    }
+    await request.save();
+
+    res.json({
+      message: 'Donation completed successfully',
+      donorResponse,
+      request
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
