@@ -1,68 +1,268 @@
-# BloodConnect
-### Blood Donation & Emergency Finder System
+# 🩸 BloodConnect
 
-A real-time full-stack platform connecting blood donors with hospitals during emergencies, powered by an ML-based donor prediction engine.
+A full-stack MERN application that connects blood donors with hospitals through an intelligent and easy-to-use platform. BloodConnect enables donor registration, hospital blood requests, donor search based on blood group and location, and role-based dashboards for donors, hospitals, and administrators.
 
-## Live Demo
-- Frontend: https://bloodconnect.vercel.app
-- Backend API: https://bloodconnect-api.onrender.com
+> Built to simplify emergency blood donation and improve the speed of finding suitable donors.
 
-## Features
-- Real-time donor search by blood type and city
-- ML-based donor availability prediction and ranking
-- SOS Emergency Mode — finds all compatible donors in under 2 seconds
-- Hospital inventory management with automated low-stock alerts
-- Donor gamification — badges, donation streaks, leaderboard
-- Role-based dashboards for Donors, Hospitals, and Admins
-- JWT authentication with bcrypt password hashing
+---
 
-## Tech Stack
-| Layer | Technology |
-|---|---|
-| Frontend | React.js, React Router, Axios |
-| Backend | Node.js, Express.js |
-| Database | MongoDB Atlas |
-| Auth | JWT + bcryptjs |
-| ML Layer | Custom JS prediction algorithm |
+## 🌐 Live Demo
 
-## Setup Instructions
+🔗 **Live Website:** https://blood-connect-umber.vercel.app
+
+> **Note:** The backend is hosted on Railway's free tier. If the application has been inactive, the first request may take a few seconds while the server wakes up.
+
+---
+
+## ✨ Features
+
+### Donor
+
+- Register and login securely
+- Manage donor profile
+- Toggle donation availability
+- View donation badges
+- Search nearby blood requests
+
+### Hospital
+
+- Hospital authentication
+- Create blood requests
+- View active requests
+- Manage blood inventory
+- Track donor responses
+
+### Admin
+
+- View platform analytics
+- Monitor hospitals and donors
+- Blood type distribution
+- Request statistics
+- Manage system overview
+
+### Security
+
+- JWT Authentication
+- Role-Based Access Control (RBAC)
+- Password hashing using bcrypt
+- Protected API routes
+- Input validation
+
+---
+
+## 📸 Application Screenshots
+
+### Home Page
+
+![Home Page](./assets/home-page.png)
+
+---
+
+### Donor Registration
+
+![Donor Registration](./assets/donor-registration.png)
+
+---
+
+### Donor Dashboard
+
+![Donor Dashboard](./assets/donor-dashboard.png)
+
+---
+
+### Edit Profile
+
+![Edit Profile](./assets/edit-profile.png)
+
+---
+
+### Hospital Dashboard
+
+![Hospital Dashboard](./assets/hospital-dashboard.png)
+
+---
+
+### Admin Dashboard
+
+![Admin Dashboard](./assets/admin-dashboard.png)
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+- React.js
+- React Router
+- Axios
+- CSS
 
 ### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+
+### Authentication
+
+- JWT
+- bcrypt
+
+### Deployment
+
+- Vercel (Frontend)
+- Railway (Backend)
+- MongoDB Atlas (Database)
+
+---
+
+## 🏗 Project Architecture
+
+```
+
+React Frontend
+│
+▼
+Express REST API
+│
+├── Authentication
+├── Donor Routes
+├── Hospital Routes
+├── Admin Routes
+└── Request Management
+│
+▼
+MongoDB Atlas
+
+```
+
+---
+
+## 📂 Project Structure
+
+```
+
+BloodConnect
+│
+├── client
+│ ├── src
+│ ├── components
+│ ├── pages
+│ ├── context
+│ └── services
+│
+├── server
+│ ├── config
+│ ├── middleware
+│ ├── models
+│ ├── routes
+│ └── server.js
+│
+└── README.md
+
+```
+
+---
+
+## 🚀 Getting Started
+
+### Clone the repository
+
 ```bash
-cd backend
+git clone https://github.com/TwinkleGhodki/BloodConnect.git
+```
+
+### Install dependencies
+
+Frontend
+
+```bash
+cd client
 npm install
-# Create .env file with PORT, MONGO_URI, JWT_SECRET
+```
+
+Backend
+
+```bash
+cd server
+npm install
+```
+
+---
+
+### Environment Variables
+
+Backend (.env)
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection
+JWT_SECRET=your_secret
+```
+
+Frontend (.env)
+
+```env
+REACT_APP_API_URL=http://localhost:5000
+```
+
+---
+
+### Run locally
+
+Backend
+
+```bash
 npm run dev
 ```
 
-### Frontend
+Frontend
+
 ```bash
-cd frontend
-npm install
 npm start
 ```
 
-## Project Structure
-```
-blood-donation-system/
-├── backend/
-│   ├── config/        # Database connection
-│   ├── models/        # MongoDB schemas
-│   ├── routes/        # API endpoints
-│   ├── middleware/    # JWT auth middleware
-│   └── ml/           # Donor prediction algorithm
-└── frontend/
-    ├── src/
-    │   ├── pages/     # All React pages
-    │   └── components/# Reusable components
-```
+---
 
-## User Roles
-- **Donor** — Register, search requests, accept/decline, earn badges
-- **Hospital** — Post requests, trigger SOS, manage inventory
-- **Admin** — View all users, verify donors, system analytics
+## 📡 API Endpoints
 
-## Impact
-- Reduces donor search time from 30+ minutes to under 2 minutes
-- ML prediction scores rank donors by response likelihood
-- SOS mode notifies all compatible donors instantly
+| Method | Endpoint | Description |
+|----------|----------------------------|---------------------------|
+| POST | /api/auth/register | Register user |
+| POST | /api/auth/login | Login user |
+| GET | /api/donors | Search donors |
+| POST | /api/requests | Create request |
+| GET | /api/requests | Get all requests |
+| GET | /api/admin/stats | Admin dashboard |
+
+---
+
+## 📸 Screenshots
+
+Screenshots will be added soon.
+
+---
+
+## 🚀 Future Improvements
+
+- Email notifications
+- SMS alerts
+- Real-time request updates
+- Blood donation history
+- AI-based donor ranking
+- Google Maps integration
+- Push notifications
+
+---
+
+## 👨‍💻 Author
+
+**Twinkle Ghodki**
+
+- GitHub: https://github.com/TwinkleGhodki
+- LinkedIn: https://linkedin.com/in/twinkleghodki
+
+---
+
+If you found this project helpful, consider giving it a ⭐ on GitHub.
